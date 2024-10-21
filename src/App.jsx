@@ -1,38 +1,17 @@
-import reactImg from "./assets/react-core-concepts.png";
-import componentsImg from "./assets/components.png";
-import { CORE_CONCEPTS } from "./data.js";
+import { useState } from "react";
 
-const reactDescriptions = ["Fundamental", "Crucial", "Core"];
-function getRandomInt(max) {
-  return Math.floor(Math.random() * (max + 1));
-}
-
-function Header() {
-  const description = reactDescriptions[getRandomInt(2)];
-
-  return (
-    <header>
-      <img src={reactImg} alt="Stylized atom" />
-      <h1>React Essentials</h1>
-      <p>
-        {description} React concepts you will need for almost any app you are
-        going to build!
-      </p>
-    </header>
-  );
-}
-
-function CoreConcept(props) {
-  return (
-    <li>
-      <img src={props.img} alt={props.title} />
-      <h3>{props.title}</h3>
-      <p>{props.description}</p>
-    </li>
-  );
-}
+import { CORE_CONCEPTS, EXAMPLES } from "./data.js";
+import Header from "./components/Header.jsx";
+import CoreConcept from "./components/CoreConcept.jsx";
+import TabButton from "./components/TabButton.jsx";
 
 function App() {
+  const [selectedTopic, setSelectedTopic] = useState("");
+
+  function handleClick(selectedButton) {
+    setSelectedTopic(selectedButton);
+  }
+
   return (
     <div>
       <Header />
@@ -41,15 +20,33 @@ function App() {
           <h2>Core Concepts</h2>
           <ul>
             {CORE_CONCEPTS.map((concept, index) => (
-              <CoreConcept
-                key={index}
-                img={concept.image}
-                title={concept.title}
-                description={concept.description}
-              />
+              <CoreConcept {...CORE_CONCEPTS[index]} />
             ))}
           </ul>
         </section>
+
+        <section id="examples">
+          <h2>Examples</h2>
+          <menu>
+            <TabButton onClick={() => handleClick("components")}>
+              Components
+            </TabButton>
+            <TabButton onClick={() => handleClick("jsx")}>JSX</TabButton>
+            <TabButton onClick={() => handleClick("props")}>Props</TabButton>
+            <TabButton onClick={() => handleClick("state")}>State</TabButton>
+          </menu>
+        </section>
+        {!selectedTopic ? (
+          <p>Please select a topic.</p>
+        ) : (
+          <div id="tab-content">
+            <h3>{EXAMPLES[selectedTopic].title}</h3>
+            <p>{EXAMPLES[selectedTopic].description}</p>
+            <pre>
+              <code>{EXAMPLES[selectedTopic].code}</code>
+            </pre>
+          </div>
+        )}
       </main>
     </div>
   );
